@@ -1,6 +1,6 @@
 # melis-cms-share
 
-MelisTipmail is the module that allow user access TipMail inside the melisplatform as a module.
+MelisTipimail is the module that allow user access TipiMail inside the melisplatform as a module.
 
 ## Getting Started
 
@@ -15,12 +15,12 @@ This will automatically be done when using composer.
 
 Run the composer command:
 ```
-composer require melisplatform/melis-tipmail
+composer require melisplatform/melis-tipimail
 ```
 
 ## Tools & Elements provided
 
-* Tipmail
+* Tipimail Tool
 
 ## MelisUserAccount Templating Plugins
 
@@ -30,7 +30,7 @@ MelisTipmail have no plugins yet
 
 * **Melis Technology** - [www.melistechnology.com](https://www.melistechnology.com/)
 
-See also the list of [contributors](https://github.com/melisplatform/melis-tipmail/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/melisplatform/melis-tipimail/contributors) who participated in this project.
 
 
 ## Contributing

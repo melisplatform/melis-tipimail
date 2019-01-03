@@ -11,7 +11,7 @@ return array(
                                 'meliscms_tools_section' => array(
                                     'conf' => array(
                                         'id' => 'id_melis_tipmail_tools_section',
-                                        'name' => 'tr_melis_tipmail',
+                                        'name' => 'tr_melis_tipimail',
                                         'icon' => 'fa-envelope',
                                         'rights_checkbox_disable' => true,
                                     ),
@@ -63,7 +63,7 @@ return array(
                 'Tipimail_tool_access' => array(
                     'conf' => array(
                         'id' => 'id_melis_tool_tipimail_webaccess',
-                        'name' => 'tr_melis_tipmail',
+                        'name' => 'tr_melis_tipimail',
                         'melisKey' => 'melis_tool_tipimail_webaccess',
                         'icon' => 'fa-envelope',
                         'rights_checkbox_disable' => true,

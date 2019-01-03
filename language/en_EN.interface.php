@@ -1,4 +1,4 @@
 <?php 
 	return array(
-	    'tr_melis_tipmail' => "Melis Tipmail"
+	    'tr_melis_tipimail' => "Melis Tipimail"
     );

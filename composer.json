@@ -1,11 +1,11 @@
 {
-  "name": "melisplatform/melis-tipmail",
+  "name": "melisplatform/melis-tipimail",
   "type": "melisplatform-module",
   "license": "OSL-3.0",
-  "homepage": "https://github.com/melisplatform/melis-tipmail",
+  "homepage": "https://github.com/melisplatform/melis-tipimail",
   "support": {
-    "source": "https://github.com/melisplatform/melis-tipmail",
-    "issues": "https://github.com/melisplatform/melis-tipmail/issues"
+    "source": "https://github.com/melisplatform/melis-tipimail",
+    "issues": "https://github.com/melisplatform/melis-tipimail/issues"
   },
   "keywords": [
     "cms",
@@ -14,7 +14,7 @@
     "module"
   ],
   "extra": {
-    "module-name": "MelisTipmail",
+    "module-name": "MelisTipimail",
     "dbdeploy": true
   },
   "require": {
