@@ -11,6 +11,10 @@ return array(
     'router' => array(
         'routes' => array(
             'melis-backoffice' => array(
+                'type'    => 'Segment',
+                'options' => array(
+                    'route'    => '/melis[/]',
+                ),
                 'child_routes' => array(
                     'applicationMelisTipiMail' => array(
                         'type'    => 'Literal',
