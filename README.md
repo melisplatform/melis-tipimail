@@ -22,9 +22,9 @@ composer require melisplatform/melis-tipimail
 
 * Tipimail Tool
 
-## MelisUserAccount Templating Plugins
+## MelisTipimail Templating Plugins
 
-MelisTipmail have no plugins yet
+MelisTipimail have no plugins yet
 
 ## Authors
 
