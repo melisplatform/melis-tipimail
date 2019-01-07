@@ -19,14 +19,18 @@ use Zend\Session\Container;
  */
 class TipimailController extends AbstractActionController
 {
-	
-	/**
-	 * Makes the rendering of the Page Versioning Tab
-	 * @return \Zend\View\Model\ViewModel
-	 */
-	public function webaccessAction()
+    const TOOL_KEY = 'melis_tipmail_tool';
+    /**
+     * Makes the rendering of the Page Versioning Tab
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function webaccessAction()
     {
         $melisKey = $this->params()->fromRoute('melisKey', '');
+        $melisCoreRights = $this->getServiceLocator()->get('MelisCoreRights');
+        if(!$melisCoreRights->canAccess($this::TOOL_KEY)) {
+            $noAccessPrompt = $this->getTool()->getTranslation('tr_tool_no_access');
+        }
 
         /**
          * Send back the view and add the form config inside
@@ -35,5 +39,12 @@ class TipimailController extends AbstractActionController
         $view->melisKey = $melisKey;
 
         return $view;
+    }
+    private function getTool()
+    {
+        /** @var MelisCoreToolService $toolSvc */
+        $toolSvc = $this->getServiceLocator()->get('MelisCoreTool');
+        $toolSvc->setMelisToolKey('MelisTipmail', 'melis_tipmail_tool');
+        return $toolSvc;
     }
 }

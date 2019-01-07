@@ -8,7 +8,8 @@ return array(
                 'rightsDisplay' => 'none',
             ),
             'tools' => array(
-                
+                'melis_tipmail_tool' => array()
+
             ),
         ),
     ),

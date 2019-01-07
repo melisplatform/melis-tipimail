@@ -66,7 +66,6 @@ return array(
                         'name' => 'tr_melis_tipimail',
                         'melisKey' => 'melis_tool_tipimail_webaccess',
                         'icon' => 'fa-envelope',
-                        'rights_checkbox_disable' => true,
                     ),
                     'forward' => array(
                         'module' => 'MelisTipimail',
