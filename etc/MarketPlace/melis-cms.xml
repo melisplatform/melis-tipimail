@@ -1,0 +1,20 @@
+<melis-cms>
+	<package_info>
+		<mp_title>Melis Tipimail</mp_title>
+		<mp_subtitle>MelisTipimail is a module that allow user to access TipiMail inside the melisplatform as a module.</mp_subtitle>
+		<mp_description>
+			<![CDATA[
+				<p>MelisTipimail is a module that allow user to access TipiMail inside the melisplatform as a module.</p>
+			]]>
+		</mp_description>
+		<mp_maintainers>melisplatform</mp_maintainers>
+		<mp_group>Melis Marketing</mp_group>
+	</package_info>
+	<package_images>
+		<img_1>
+			<mpi_image_title>MelisTipimail's tool view </mpi_image_title>
+			<mpi_image_file>melis-tipimail-1.JPG</mpi_image_file>
+			<mpi_image_main>1</mpi_image_main>
+		</img_1>
+	</package_images>
+</melis-cms>
