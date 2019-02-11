@@ -1,4 +1,4 @@
-# melis-cms-share
+# melis-tipimail
 
 MelisTipimail is the module that allow user access TipiMail inside the melisplatform as a module.
 
@@ -8,23 +8,45 @@ These instructions will get you a copy of the project up and running on your mac
 
 ### Prerequisites
 
-You will need to install melisplatform/melis-engine and melisplatform/melis-core in order to have this module running.
+You will need to install melisplatform/melis-core in order to have this module running.
 This will automatically be done when using composer.
 
 ### Installing
 
 Run the composer command:
 ```
-composer require melisplatform/melis-tipimail
+    {
+        "require": {
+            "melisplatform/melis-tipimail": "dev-master"
+        },
+        "repositories": [
+            {
+                "type": "git",
+                "url": "https://github.com/melisplatform/melis-tipimail"
+            }
+        ]
+    }
+```
+### Configuration
+
+Inside the melis-tipimail/config/app.tools.php you can configure the url of which the tool's iframe is being directed.
+```
+    'plugins' => array(
+        'melisTipimail' => array(
+            'tools' => array(
+                'melis_tipmail_tool' => array(
+                    'config' => array(
+                        'url' => 'https://app.tipimail.com/#/access/login'
+                    ),
+                ),
+            ),
+        ),
+    ),
 ```
 
 ## Tools & Elements provided
 
 * Tipimail Tool
-
-## MelisTipimail Templating Plugins
-
-MelisTipimail have no plugins yet
 
 ## Authors
 

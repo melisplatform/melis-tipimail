@@ -27,6 +27,11 @@ class TipimailController extends AbstractActionController
     public function webaccessAction()
     {
         $melisKey = $this->params()->fromRoute('melisKey', '');
+        $config = $this->getServiceLocator()->get('MelisCoreConfig');
+
+        $tipiMailUrl  = $config->getItem("melisTipimail/tools/melis_tipmail_tool/config");
+        $tipiMailUrl = $tipiMailUrl['url'];
+
         $melisCoreRights = $this->getServiceLocator()->get('MelisCoreRights');
         if(!$melisCoreRights->canAccess($this::TOOL_KEY)) {
             $noAccessPrompt = $this->getTool()->getTranslation('tr_tool_no_access');
@@ -35,7 +40,9 @@ class TipimailController extends AbstractActionController
         /**
          * Send back the view and add the form config inside
          */
+
         $view = new ViewModel();
+        $view->url = $tipiMailUrl;
         $view->melisKey = $melisKey;
 
         return $view;

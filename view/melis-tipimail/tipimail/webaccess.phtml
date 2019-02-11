@@ -1,23 +1,23 @@
 <?php
-	$data_melisKey = $this->melisKey;
+    $data_melisKey = $this->melisKey;
 ?>
 <div id='id_melis_tool_tipimail_webaccess' data-melisKey='<?= $data_melisKey; ?>'  class="tab-pane container-level-a active">
-<br>
-	<script>
+    <br>
+    <script>
 
-		function load(){
-			var iHeight = $(window).height() - 55;
-			$("#"+ activeTabId + " .melis-tipimail").css("height", iHeight);
-		}
+        function load(){
+            var iHeight = $(window).height() - 55;
+            $("#"+ activeTabId + " .melis-tipimail").css("height", iHeight);
+        }
 
-	</script>
+    </script>
 
-	<style>
-	
-    	.melis-tipimail{
-    	   border:none;
-    	}
-    	
-	</style>
-	<iframe width="100%" class="melis-tipimail"  onload="load();" src="https://app.tipimail.com/#/access/login"></iframe>
+    <style>
+
+        .melis-tipimail{
+            border:none;
+        }
+
+    </style>
+    <iframe width="100%" class="melis-tipimail"  onload="load();" src="<?php echo $this->url; ?>"></iframe>
 </div>	

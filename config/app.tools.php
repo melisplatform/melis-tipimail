@@ -8,8 +8,11 @@ return array(
                 'rightsDisplay' => 'none',
             ),
             'tools' => array(
-                'melis_tipmail_tool' => array()
-
+                'melis_tipmail_tool' => array(
+                    'config' => array(
+                        'url' => 'https://app.tipimail.com/#/access/login'
+                    ),
+                ),
             ),
         ),
     ),
