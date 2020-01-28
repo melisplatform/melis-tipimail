@@ -1,4 +1,4 @@
-<melis-cms>
+<melis-tipimail>
 	<package_info>
 		<mp_title>Melis Tipimail</mp_title>
 		<mp_subtitle>MelisTipimail is a module that allow user to access TipiMail inside the melisplatform as a module.</mp_subtitle>
@@ -17,4 +17,4 @@
 			<mpi_image_main>1</mpi_image_main>
 		</img_1>
 	</package_images>
-</melis-cms>
+</melis-tipimail>
