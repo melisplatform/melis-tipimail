@@ -9,14 +9,11 @@
 
 namespace MelisTipimail;
 
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\ModuleManager\ModuleManager;
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Stdlib\Hydrator\ObjectProperty;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Session\Container;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ModuleManager\ModuleManager;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Session\Container;
 
 class Module
 {
@@ -29,36 +26,32 @@ class Module
         $this->createTranslations($e);
         
     }
-    
-    public function init(ModuleManager $manager)
-    {
-    }
 
     public function getConfig()
     {
-    	$config = array();
-    	$configFiles = array(
-    			include __DIR__ . '/../config/module.config.php',
-    			include __DIR__ . '/../config/app.interface.php',
-    			include __DIR__ . '/../config/app.tools.php',
-    	);
-    	
-    	foreach ($configFiles as $file) {
-    		$config = ArrayUtils::merge($config, $file);
-    	} 
-    	
-    	return $config;
+        $config = [];
+        $configFiles = [
+                include __DIR__ . '/../config/module.config.php',
+                include __DIR__ . '/../config/app.interface.php',
+                include __DIR__ . '/../config/app.tools.php',
+        ];
+        
+        foreach ($configFiles as $file) {
+            $config = ArrayUtils::merge($config, $file);
+        } 
+        
+        return $config;
     }
 
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
+        return [
+            'Laminas\Loader\StandardAutoloader' => [
+                'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function createTranslations($e)
@@ -72,10 +65,11 @@ class Module
 
         if (!empty($locale)){
 
-            $translationType = array(
+            $translationType = [
                 'interface',
-            );
-            $translationList = array();
+            ];
+
+            $translationList = [];
             if(file_exists($_SERVER['DOCUMENT_ROOT'].'/../module/MelisModuleConfig/config/translation.list.php')){
                 $translationList = include 'module/MelisModuleConfig/config/translation.list.php';
             }
@@ -100,9 +94,4 @@ class Module
             }
         }
     }
-    
-    /*public function getServiceConfig()
-    {
-        return array();
-    } */
 }
