@@ -9,30 +9,30 @@
 
 namespace MelisTipimail\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Session\Container;
+use MelisCore\Controller\MelisAbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Session\Container;
 
 /**
  * This class renders Melis CMS Page tab properties
  */
-class TipimailController extends AbstractActionController
+class TipimailController extends MelisAbstractActionController
 {
     const TOOL_KEY = 'melis_tipmail_tool';
     /**
      * Makes the rendering of the Page Versioning Tab
-     * @return \Zend\View\Model\ViewModel
+     * @return \Laminas\View\Model\ViewModel
      */
     public function webaccessAction()
     {
         $melisKey = $this->params()->fromRoute('melisKey', '');
-        $config = $this->getServiceLocator()->get('MelisCoreConfig');
+        $config = $this->getServiceManager()->get('MelisCoreConfig');
 
         $tipiMailUrl  = $config->getItem("melisTipimail/tools/melis_tipmail_tool/config");
         $tipiMailUrl = $tipiMailUrl['url'];
 
-        $melisCoreRights = $this->getServiceLocator()->get('MelisCoreRights');
+        $melisCoreRights = $this->getServiceManager()->get('MelisCoreRights');
         if(!$melisCoreRights->canAccess($this::TOOL_KEY)) {
             $noAccessPrompt = $this->getTool()->getTranslation('tr_tool_no_access');
         }
@@ -50,7 +50,7 @@ class TipimailController extends AbstractActionController
     private function getTool()
     {
         /** @var MelisCoreToolService $toolSvc */
-        $toolSvc = $this->getServiceLocator()->get('MelisCoreTool');
+        $toolSvc = $this->getServiceManager()->get('MelisCoreTool');
         $toolSvc->setMelisToolKey('MelisTipmail', 'melis_tipmail_tool');
         return $toolSvc;
     }

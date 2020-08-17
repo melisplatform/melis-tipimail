@@ -1,83 +1,81 @@
 <?php
 
-return array(
-    'plugins' => array(
-        'meliscore' => array(
-            'interface' => array(
-                'meliscore_leftmenu' => array(
-                    'interface' => array(
-                        'melismarketing_toolstree_section' => array(
-                            'interface' => array(
-                                'meliscms_tools_section' => array(
-                                    'conf' => array(
+return [
+    'plugins' => [
+        'meliscore' => [
+            'interface' => [
+                'meliscore_leftmenu' => [
+                    'interface' => [
+                        'melismarketing_toolstree_section' => [
+                            'interface' => [
+                                'meliscms_tools_section' => [
+                                    'conf' => [
                                         'id' => 'id_melis_tipmail_tools_section',
                                         'name' => 'tr_melis_tipimail',
                                         'icon' => 'fa-envelope',
                                         'rights_checkbox_disable' => true,
-                                    ),
-                                    'interface' => array(
-                                        'Tipimail_tool_access' => array(
-                                            'conf' => array(
+                                    ],
+                                    'interface' => [
+                                        'Tipimail_tool_access' => [
+                                            'conf' => [
                                                 'type' => '/melisTipimail/interface/Tipimail_tool_access',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        'melisTipimail' => array(
-            'conf' => array(
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'melisTipimail' => [
+            'conf' => [
                 'id' => '',
                 'name' => 'tr_melis_tipimail',
                 'rightsDisplay' => 'none',
-            ),
-            'ressources' => array(
-                'js' => array(
+            ],
+            'ressources' => [
+                'js' => [
                     '/MelisTipimail/js/page/tipimail.js',
-                ),
-                'css' => array(),
-            ),
-            'datas' => array(
-                'tipimail_conf' => array(
-                    'default' => array(
-                        'api' => array(
+                ],
+                'css' => [],
+            ],
+            'datas' => [
+                'tipimail_conf' => [
+                    'default' => [
+                        'api' => [
                             'serverURI' => '',
                             'username' => '',
                             'apikey' => '',
                             'apiVersion' => '1.8',
                             'urlWS' => '/Api/',
-                            'userAgent' => 'Zend\Http\Client',
-                        ),
-                        'web' => array(
+                            'userAgent' => 'Laminas\Http\Client',
+                        ],
+                        'web' => [
                             'user' => '',
                             'password' => '',
-                        )
-                    ),
-                ),
-            ),
-            'interface' => array(
-                'Tipimail_tool_access' => array(
-                    'conf' => array(
+                        ]
+                    ],
+                ],
+            ],
+            'interface' => [
+                'Tipimail_tool_access' => [
+                    'conf' => [
                         'id' => 'id_melis_tool_tipimail_webaccess',
                         'name' => 'tr_melis_tipimail',
                         'melisKey' => 'melis_tool_tipimail_webaccess',
                         'icon' => 'fa-envelope',
-                    ),
-                    'forward' => array(
+                    ],
+                    'forward' => [
                         'module' => 'MelisTipimail',
                         'controller' => 'Tipimail',
                         'action' => 'webaccess',
                         'jscallback' => '',
-                        'jsdatas' => array(),
-                    ),
-                ),
-            ),
-        ),
-
-    ),
-
-);
+                        'jsdatas' => [],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

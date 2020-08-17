@@ -1,19 +1,19 @@
 <?php
 
-return array(
-    'plugins' => array(
-        'melisTipimail' => array(
-            'conf' => array(
+return [
+    'plugins' => [
+        'melisTipimail' => [
+            'conf' => [
                 // user rights exclusions
                 'rightsDisplay' => 'none',
-            ),
-            'tools' => array(
-                'melis_tipmail_tool' => array(
-                    'config' => array(
+            ],
+            'tools' => [
+                'melis_tipmail_tool' => [
+                    'config' => [
                         'url' => 'https://app.tipimail.com/#/access/login'
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
