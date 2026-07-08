@@ -1,0 +1,8 @@
+{
+  "id": "tipimail",
+  "route": "/melis-marketing/tipimail",
+  "label": "Tipimail",
+  "forwardKey": "MelisTipimail/Tipimail",
+  "melisKey": null,
+  "entry": "brick.js"
+}

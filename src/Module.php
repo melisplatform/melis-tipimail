@@ -32,8 +32,14 @@ class Module
         $config = [];
         $configFiles = [
                 include __DIR__ . '/../config/module.config.php',
+                // React back-office API: routes + controller/invokable for the
+                // /melis/react-api/tipimail* endpoints consumed by the module's native
+                // React brick (public/ui-react/). See config/react-api.php.
+                include __DIR__ . '/../config/react-api.php',
                 include __DIR__ . '/../config/app.interface.php',
                 include __DIR__ . '/../config/app.tools.php',
+                // Tool capabilities (advanced-rights checkboxes in the Rights tab)
+                include __DIR__ . '/../config/react.capabilities.php',
         ];
         
         foreach ($configFiles as $file) {
@@ -48,7 +54,13 @@ class Module
         return [
             'Laminas\Loader\StandardAutoloader' => [
                 'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                    // Module.php lives in src/ (PSR-4 MelisTipimail\ => src/), so the namespace base
+                    // is __DIR__ (= src/), NOT __DIR__.'/src/'.__NAMESPACE__ (which resolves to the
+                    // nonexistent src/src/MelisTipimail). The wrong path meant that when this module
+                    // is NOT composer-installed (loaded via application.config.php module_paths on the
+                    // stale Docker vendor volume), its sub-classes (Controller) failed to autoload —
+                    // the Tipimail webaccess tool 500'd. (Same fix as MelisCron/MelisNewsletter.)
+                    __NAMESPACE__ => __DIR__,
                 ],
             ],
         ];
