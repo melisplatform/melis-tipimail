@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { fetchSettings, fetchAllowedTabs, type Settings as TSettings } from './tipimail-api'
+import { fetchSettings, type Settings as TSettings } from './tipimail-api'
 import { useT } from './i18n'
+import { useCaps } from './shared/useCaps'
 import { Spinner, c } from './ui'
 import Dashboard from './Dashboard'
 import MessageLog from './MessageLog'
@@ -15,18 +16,19 @@ import Settings from './Settings'
  * vars, FR/EN from <html lang>, no host imports.
  */
 
+const MELIS_KEY = 'melis_tool_tipimail_webaccess'
 type Tab = 'dashboard' | 'messages' | 'settings'
 
 export default function TipimailPage() {
   const t = useT()
+  // Advanced rights: central host caps check (window.__melisUseCaps). Each tab = one capability
+  // (config/react.capabilities.php). Default-allow while loading / when the tool is unmanaged.
+  const { can } = useCaps(MELIS_KEY)
   const [tab, setTab] = useState<Tab>('dashboard')
   const [settings, setSettings] = useState<TSettings | null>(null)
   const [loaded, setLoaded] = useState(false)
-  // Advanced rights: tab keys the user may see (null = no restriction / admin). See tipimail-api.
-  const [allowedTabs, setAllowedTabs] = useState<string[] | null>(null)
 
   useEffect(() => {
-    fetchAllowedTabs().then(setAllowedTabs)
     fetchSettings()
       .then((s) => { setSettings(s); if (!s.hasKey) setTab('settings') })
       .catch(() => setSettings({ id: 0, apiUser: '', hasKey: false }))
@@ -40,8 +42,9 @@ export default function TipimailPage() {
     { id: 'messages', label: t('tab.messages') },
     { id: 'settings', label: t('tab.settings') },
   ]
-  // Hide any tab the user is denied (default-allow: allowedTabs === null ⇒ show all).
-  const tabs = allTabs.filter((tb) => allowedTabs === null || allowedTabs.includes(tb.id))
+  // Hide any tab whose capability is denied (can() is default-allow → shows all while loading).
+  const canShow = (id: Tab) => can(id)
+  const tabs = allTabs.filter((tb) => canShow(tb.id))
 
   // Keep the active tab valid: if the current one is hidden (e.g. the no-key redirect to Settings
   // when Settings is denied), fall back to the first visible tab.
@@ -75,13 +78,17 @@ export default function TipimailPage() {
         })}
       </div>
 
-      {/* Content */}
+      {/* Content — each panel is gated by its capability, NOT just the active-tab state, so a denied
+          tab's content never renders even if `tab` still points at it (e.g. the no-key Settings
+          redirect, or when every tab is denied and the tab bar is empty). */}
       <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-        {!loaded ? <Spinner label={t('common.loading')} /> : (
+        {!loaded ? <Spinner label={t('common.loading')} /> : tabs.length === 0 ? (
+          <div style={{ padding: 24, fontSize: 13.5, color: c.muted }}>{t('common.no_access')}</div>
+        ) : (
           <>
-            {tab === 'dashboard' && <Dashboard configured={configured} onGoSettings={() => setTab('settings')} />}
-            {tab === 'messages' && <MessageLog configured={configured} onGoSettings={() => setTab('settings')} />}
-            {tab === 'settings' && <Settings settings={settings} onSaved={(s) => setSettings(s)} />}
+            {tab === 'dashboard' && canShow('dashboard') && <Dashboard configured={configured} onGoSettings={() => setTab('settings')} />}
+            {tab === 'messages' && canShow('messages') && <MessageLog configured={configured} onGoSettings={() => setTab('settings')} />}
+            {tab === 'settings' && canShow('settings') && <Settings settings={settings} onSaved={(s) => setSettings(s)} />}
           </>
         )}
       </div>

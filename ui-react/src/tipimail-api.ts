@@ -55,27 +55,6 @@ function rangeQuery(r?: DateRange): string {
   return s ? `?${s}` : ''
 }
 
-/**
- * Advanced-rights: the tab keys the current user is allowed to see for this tool.
- * Reads /melis/react-api/me → data.capabilities['melis_tool_tipimail_webaccess'] (allow-list of
- * cap paths = the tab keys 'dashboard' | 'messages' | 'settings'). Returns null when there is NO
- * restriction — admin, or the caps map is unavailable (default-allow: show every tab).
- */
-const TOOL_KEY = 'melis_tool_tipimail_webaccess'
-export async function fetchAllowedTabs(): Promise<string[] | null> {
-  try {
-    const res = await fetch('/melis/react-api/me', { headers: XHR, credentials: 'same-origin' })
-    const json: any = await res.json()
-    if (!json || json.success !== true || !json.data) return null
-    if (json.data.isAdmin) return null // admin ⇒ everything allowed
-    const caps = json.data.capabilities
-    const arr = caps && typeof caps === 'object' ? caps[TOOL_KEY] : undefined
-    return Array.isArray(arr) ? (arr as string[]) : null
-  } catch {
-    return null
-  }
-}
-
 export const fetchSettings = () => apiFetch<Settings>(`${BASE}/settings`)
 
 export const saveSettings = (apiUser: string, apiKey: string) =>
