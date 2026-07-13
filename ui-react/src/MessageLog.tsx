@@ -24,6 +24,9 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
   const [data, setData] = useState<Messages | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
+  // Incrémenté par « Réinitialiser les filtres » : force le rechargement même quand la
+  // recherche et la page sont déjà à leur valeur par défaut (sinon l'effet ne rejoue pas).
+  const [tick, setTick] = useState(0)
 
   const load = useCallback((p: number, s: string) => {
     setLoading(true); setError(null)
@@ -34,7 +37,15 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
       .finally(() => setLoading(false))
   }, [days])
 
-  useEffect(() => { if (configured) load(page, search) }, [configured, page, search, load])
+  useEffect(() => { if (configured) load(page, search) }, [configured, page, search, load, tick])
+
+  // Réinitialiser : recherche + page 1, puis rechargement. On vide `data` pour repasser par
+  // l'état « Chargement » (sinon les anciennes lignes restent et le clic paraît sans effet).
+  const resetFilters = () => {
+    setSearchInput(''); setSearch(''); setPage(1)
+    setData(null)
+    setTick((x) => x + 1)
+  }
 
   if (!configured) return <NotConfigured t={t} onGo={onGoSettings} />
 
@@ -57,7 +68,13 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
           />
           <Button variant="ghost" onClick={submitSearch}>{t('common.search')}</Button>
         </div>
-        <Button variant="ghost" onClick={() => load(page, search)} disabled={loading} style={{ marginLeft: 'auto' }}>
+        <Button variant="ghost" onClick={resetFilters} style={{ marginLeft: 'auto' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 2v6h6" /><path d="M3 13a9 9 0 1 0 3-7.7L3 8" />
+          </svg>
+          {t('common.reset_filters')}
+        </Button>
+        <Button variant="ghost" onClick={() => load(page, search)} disabled={loading}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" />
           </svg>
