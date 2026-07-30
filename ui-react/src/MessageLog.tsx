@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState, type CSSProperties } from 'react'
-import { fetchMessages, type Messages, type ApiError } from './tipimail-api'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { fetchMessages, type MessageRow, type ApiError } from './tipimail-api'
 import { useT, useLang } from './i18n'
 import { Card, Button, Spinner, NotConfigured, ErrorBanner, c, fmtDate } from './ui'
 
@@ -18,42 +18,71 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
   const t = useT()
   const lang = useLang()
   const [days] = useState(30)
-  const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
-  const [data, setData] = useState<Messages | null>(null)
+  const [items, setItems] = useState<MessageRow[]>([])
+  const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
-  // Incrémenté par « Réinitialiser les filtres » : force le rechargement même quand la
-  // recherche et la page sont déjà à leur valeur par défaut (sinon l'effet ne rejoue pas).
+  // Incrémenté par « Réinitialiser les filtres » / « Actualiser » : force un rechargement frais.
   const [tick, setTick] = useState(0)
 
-  const load = useCallback((p: number, s: string) => {
-    setLoading(true); setError(null)
+  // Scroll infini sur la pagination de l'API Tipimail (externe) : on concatène les pages jusqu'à
+  // épuisement de `total`. Pas de tri server-side (l'API externe n'en expose pas via notre proxy).
+  const pageRef = useRef(0)
+  const loadingRef = useRef(false)
+  const reqRef = useRef(0)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  const load = useCallback(async (reset: boolean) => {
+    if (!reset && loadingRef.current) return
+    const myReq = ++reqRef.current
+    loadingRef.current = true
+    setLoading(true)
+    if (reset) setError(null)
+    const nextPage = reset ? 1 : pageRef.current + 1
     const end = Math.floor(Date.now() / 1000)
-    fetchMessages({ page: p, pageSize: PAGE_SIZE, search: s, dateBegin: end - days * DAY, dateEnd: end })
-      .then((m) => setData(m))
-      .catch((e: ApiError) => setError(e))
-      .finally(() => setLoading(false))
-  }, [days])
+    try {
+      const m = await fetchMessages({ page: nextPage, pageSize: PAGE_SIZE, search, dateBegin: end - days * DAY, dateEnd: end })
+      if (myReq !== reqRef.current) return
+      pageRef.current = nextPage
+      setTotal(m.total || 0)
+      setItems((prev) => (reset ? m.items : [...prev, ...m.items]))
+      // `total` = total NON filtré côté Tipimail → on continue de charger tant qu'il reste des pages.
+      setHasMore(nextPage * PAGE_SIZE < (m.total || 0))
+    } catch (e) {
+      if (myReq === reqRef.current) { setError(e as ApiError); setHasMore(false) }
+    } finally {
+      if (myReq === reqRef.current) { setLoading(false); loadingRef.current = false }
+    }
+  }, [days, search])
 
-  useEffect(() => { if (configured) load(page, search) }, [configured, page, search, load, tick])
+  // Chargement frais au 1er montage + à chaque changement de filtre/refresh.
+  useEffect(() => { if (configured) load(true) }, [configured, search, tick, load])
 
-  // Réinitialiser : recherche + page 1, puis rechargement. On vide `data` pour repasser par
+  // Sentinel visible → page suivante (load gère l'anti-stack).
+  useEffect(() => {
+    if (!sentinelRef.current || !hasMore) return
+    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) load(false) }, { rootMargin: '120px' })
+    obs.observe(sentinelRef.current)
+    return () => obs.disconnect()
+  }, [hasMore, load])
+
+  // Réinitialiser : recherche + rechargement depuis la page 1. On vide `items` pour repasser par
   // l'état « Chargement » (sinon les anciennes lignes restent et le clic paraît sans effet).
   const resetFilters = () => {
-    setSearchInput(''); setSearch(''); setPage(1)
-    setData(null)
+    setSearchInput(''); setSearch('')
+    setItems([])
     setTick((x) => x + 1)
   }
 
   if (!configured) return <NotConfigured t={t} onGo={onGoSettings} />
 
-  const items = data?.items ?? []
   const th: CSSProperties = { textAlign: 'left', padding: '10px 12px', fontSize: 11, fontWeight: 600, color: c.muted, textTransform: 'uppercase', letterSpacing: '.03em', borderBottom: `1px solid ${c.border}` }
   const td: CSSProperties = { padding: '10px 12px', fontSize: 13, borderBottom: `1px solid ${c.border}`, verticalAlign: 'top' }
 
-  const submitSearch = () => { setSearch(searchInput.trim()); setPage(1) }
+  const submitSearch = () => { setSearch(searchInput.trim()) }
 
   return (
     <div style={{ padding: 20 }}>
@@ -74,7 +103,7 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
           </svg>
           {t('common.reset_filters')}
         </Button>
-        <Button variant="ghost" onClick={() => load(page, search)} disabled={loading}>
+        <Button variant="ghost" onClick={() => setTick((x) => x + 1)} disabled={loading}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" />
           </svg>
@@ -85,7 +114,7 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
       {error && <ErrorBanner message={error.code === 'invalid_credentials' ? t('error.invalid') : (error.message || t('error.generic'))} />}
 
       <Card style={{ overflow: 'hidden' }}>
-        {loading && !data ? <Spinner label={t('common.loading')} /> : (
+        {loading && items.length === 0 ? <Spinner label={t('common.loading')} /> : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
@@ -111,13 +140,16 @@ export default function MessageLog({ configured, onGoSettings }: { configured: b
             </table>
           </div>
         )}
+        <div ref={sentinelRef} style={{ height: 1 }} />
+        {loading && items.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 16px', fontSize: 12, color: c.muted }}>
+            <Spinner />{t('common.loading')}
+          </div>
+        )}
+        {!hasMore && items.length > 0 && (
+          <div style={{ padding: '10px 16px', textAlign: 'center', fontSize: 12, color: c.muted }}>{t('msg.count', { n: total })}</div>
+        )}
       </Card>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginTop: 14 }}>
-        <Button variant="ghost" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1 || loading}>{t('msg.prev')}</Button>
-        <span style={{ fontSize: 12, color: c.muted }}>{t('msg.page', { n: page })}</span>
-        <Button variant="ghost" onClick={() => setPage((p) => p + 1)} disabled={loading || items.length < PAGE_SIZE}>{t('msg.next')}</Button>
-      </div>
     </div>
   )
 }
