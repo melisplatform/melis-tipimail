@@ -1,7 +1,8 @@
 import { useState, type CSSProperties } from 'react'
 import { saveSettings, testConnection, type Settings as TSettings, type ApiError } from './tipimail-api'
 import { useT } from './i18n'
-import { Card, Button, Spinner, ErrorBanner, c } from './ui'
+import { Card, Button, Spinner, c } from './ui'
+import { FormErrorBanner, type FormIssue } from './shared/melis-form-errors'
 
 export default function Settings({
   settings, onSaved,
@@ -14,19 +15,22 @@ export default function Settings({
   const [apiKey, setApiKey] = useState('')
   const hasKey = !!settings?.hasKey
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  // Unified error surface: a headline + the specific failing fields listed in the banner.
+  const [err, setErr] = useState<{ title: string; issues?: unknown } | null>(null)
   const [saved, setSaved] = useState(false)
   const [testing, setTesting] = useState(false)
   const [testMsg, setTestMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const save = () => {
-    setError(null); setSaved(false); setTestMsg(null)
-    if (!apiUser.trim()) { setError(t('set.required')); return }
-    if (!apiKey.trim() && !hasKey) { setError(t('set.keyRequired')); return }
+    setErr(null); setSaved(false); setTestMsg(null)
+    const issues: FormIssue[] = []
+    if (!apiUser.trim()) issues.push({ label: t('set.apiUser'), message: t('set.required') })
+    if (!apiKey.trim() && !hasKey) issues.push({ label: t('set.apiKey'), message: t('set.keyRequired') })
+    if (issues.length) { setErr({ title: t('set.checkFields'), issues }); return }
     setSaving(true)
     saveSettings(apiUser.trim(), apiKey.trim())
       .then((s) => { onSaved(s); setApiKey(''); setSaved(true) })
-      .catch((e: ApiError) => setError(e.message || t('error.generic')))
+      .catch((e: ApiError) => setErr({ title: e.message || t('error.generic') }))
       .finally(() => setSaving(false))
   }
 
@@ -50,7 +54,7 @@ export default function Settings({
         <h2 style={{ margin: '0 0 6px', fontSize: 17, fontWeight: 600 }}>{t('set.title')}</h2>
         <p style={{ margin: '0 0 20px', fontSize: 12.5, color: c.muted, lineHeight: 1.6 }}>{t('set.help')}</p>
 
-        {error && <ErrorBanner message={error} />}
+        {err && <FormErrorBanner title={err.title} issues={err.issues} />}
         {saved && (
           <div style={{ background: 'color-mix(in srgb, #16a34a 12%, transparent)', color: '#16a34a', border: '1px solid color-mix(in srgb, #16a34a 40%, transparent)', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>
             {t('set.saved')}

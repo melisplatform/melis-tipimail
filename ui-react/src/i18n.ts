@@ -58,6 +58,7 @@ export const DICT = {
     'set.testKo': 'Échec de la connexion : {err}',
     'set.required': 'L’identifiant API est obligatoire.',
     'set.keyRequired': 'La clé API est obligatoire.',
+    'set.checkFields': 'Veuillez vérifier les champs requis.',
   },
   en: {
     'tab.dashboard': 'Dashboard',
@@ -110,6 +111,7 @@ export const DICT = {
     'set.testKo': 'Connection failed: {err}',
     'set.required': 'API user is required.',
     'set.keyRequired': 'API key is required.',
+    'set.checkFields': 'Please check the required fields.',
   },
 } as const
 
