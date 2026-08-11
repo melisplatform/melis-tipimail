@@ -3,6 +3,6 @@
   "route": "/melis-marketing/tipimail",
   "label": "Tipimail",
   "forwardKey": "MelisTipimail/Tipimail",
-  "melisKey": null,
+  "melisKey": "melis_tool_tipimail_webaccess",
   "entry": "brick.js"
 }

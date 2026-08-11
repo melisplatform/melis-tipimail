@@ -1,23 +1,17 @@
 <?php
 
 /**
- * Routes + controller React API provided by MelisTipimail (native tool).
+ * Routes + controller React API provided by MelisTipimail.
  *
  * These routes ADD to the child_routes of `melis-react-api` (the generic bridge).
  * Modularity: the tool's controller/routes/invokable live in THIS module, not in
  * MelisReactApi. Laminas\Stdlib\ArrayUtils::merge() merges the configs (via
- * MelisTipimail\Module::getConfig()). The UI is delivered by the module's React brick
- * (public/ui-react/), which talks to these endpoints instead of embedding an iframe.
+ * MelisTipimail\Module::getConfig()).
  *
- * All endpoints are gated by the tool melisKey (`melis_tool_tipimail_webaccess`) and
- * return the standard `{success, data, error}` envelope. They proxy the public Tipimail
- * REST API (https://api.tipimail.com/v1/) via MelisTipimail\Service\MelisTipimailApiService.
+ * The tool is a single screen (see ui-react/src/TipimailPage.tsx): it asks this one
+ * endpoint for the configured Tipimail URL and whether it can be embedded in an iframe.
  *
- *   GET  /melis/react-api/tipimail/settings          current credentials (apiUser + hasKey)
- *   POST /melis/react-api/tipimail/settings/save     save credentials
- *   GET  /melis/react-api/tipimail/test              validate credentials (GET account)
- *   GET  /melis/react-api/tipimail/stats             account credits + statistics/sends (KPIs)
- *   GET  /melis/react-api/tipimail/messages          statistics/messages (message log)
+ *   GET /melis/react-api/tipimail/webaccess-url   { url, canFrame }
  */
 
 $defaults = static function (string $action): array {
@@ -39,12 +33,7 @@ return [
                 'child_routes' => [
                     'melis-react-api' => [
                         'child_routes' => [
-                            // ⚠ literal segments (/settings/save) declared before the plain /settings.
-                            'tipimail-settings-save' => $seg('/tipimail/settings/save[/]', 'settingsSave'),
-                            'tipimail-settings-get'  => $seg('/tipimail/settings[/]', 'settingsGet'),
-                            'tipimail-test'          => $seg('/tipimail/test[/]', 'test'),
-                            'tipimail-stats'         => $seg('/tipimail/stats[/]', 'stats'),
-                            'tipimail-messages'      => $seg('/tipimail/messages[/]', 'messages'),
+                            'tipimail-webaccess-url' => $seg('/tipimail/webaccess-url[/]', 'webaccessUrl'),
                         ],
                     ],
                 ],
